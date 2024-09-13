@@ -1,15 +1,44 @@
 // 預定義的名字和對應組別
-const names = ["Alice", "Bob", "Charlie", "Diana", "徐瑋軒", '犯研約', '黃翰源', '楊恩雅'];
+// const names = ["Alice", "Bob", "Charlie", "Diana", "徐瑋軒", '犯研約', '黃翰源', '楊恩雅'];
 const groups = ["img/A.jpg", "img/B.jpg", "img/C.jpg", "img/D.jpg"];
+// const preAssignedGroups = {
+//     "徐瑋軒": 2,
+//     '楊恩雅': 3,
+//     '黃翰源': 1,
+//     "犯研約": 0,
+//     "Alice": 0, // 0對應 group1.png
+//     "Bob": 1,   // 1對應 group2.png
+//     "Charlie": 2, // 2對應 group3.png
+//     "Diana": 3  // 3對應 group4.png
+// };
+const names = ['吳頔', '董世亮', '吳與倫', '酉璦', '苡沁', '陳信蓉', '陳真泰', '晉澤', '吳限', '張詠晴', '陳雨青', '尤喜恩', '游芷彤', '陳信豪', '丁康豪', '酉謙', '陳照希', '吳祈悠', '尤樂恩', '游子琪', '陳建榮', '林秉炫', '歐梓元', '詩莛', '周襄妮', '陳姮瑞'].sort();
 const preAssignedGroups = {
-    "徐瑋軒": 2,
-    '楊恩雅': 3,
-    '黃翰源': 1,
-    "犯研約": 0,
-    "Alice": 0, // 0對應 group1.png
-    "Bob": 1,   // 1對應 group2.png
-    "Charlie": 2, // 2對應 group3.png
-    "Diana": 3  // 3對應 group4.png
+    "吳頔": 0,
+    "董世亮": 0,
+    "吳與倫": 0,
+    "酉璦": 0,
+    "苡沁": 0,
+    "陳信蓉": 0,
+    "陳真泰": 1,
+    "晉澤": 1,
+    "吳限": 1,
+    "張詠晴": 1,
+    "陳雨青": 1,
+    "尤喜恩": 1,
+    "游芷彤": 1,
+    "陳信豪": 2,
+    "丁康豪": 2,
+    "酉謙": 2,
+    "陳照希": 2,
+    "吳祈悠": 2,
+    "尤樂恩": 2,
+    "游子琪": 2,
+    "陳建榮": 3,
+    "林秉炫": 3,
+    "歐梓元": 3,
+    "詩莛": 3,
+    "周襄妮": 3,
+    "陳姮瑞": 3
 };
 
 // 從 Local Storage 讀取已分組結果
@@ -57,15 +86,15 @@ function startAnimation(name) {
     imageElement.classList.remove('group-image');
     let intervalSpeed = 10; // 開始的動畫速度
     function runAnimation() {
-        
+
         currentImageIndex = (currentImageIndex + 1) % groups.length;
         imageElement.src = groups[currentImageIndex];
-        
+
 
         // 每次遞增間隔速度，使切換逐漸變慢
         intervalSpeed += 10;
 
-        if (intervalSpeed <= 260) {
+        if (intervalSpeed <= 10) {
             // 在速度還沒達到1000毫秒之前，繼續切換
             setTimeout(runAnimation, intervalSpeed);
         } else {
@@ -87,7 +116,8 @@ function startAnimation(name) {
             // const listItem = document.createElement('li');
             // listItem.textContent = name;
             groupLists[finalGroup].appendChild(btnMember)
-            function restore(){
+            calculateMemberCountOfEachGroup();
+            function restore() {
                 image.classList.remove('fullscreen');
                 imageElement.classList.remove('animation-box');
                 imageElement.classList.add('group-image');
@@ -112,6 +142,7 @@ function removeFromGroup(id, parent, name) {
     console.log({ groupResult });
     delete groupResult[name];
     localStorage.setItem('groupResults', JSON.stringify(groupResult))
+    calculateMemberCountOfEachGroup();
 }
 
 
@@ -133,10 +164,34 @@ document.getElementById('clear-storage').addEventListener('click', () => {
 
 // 根據 Local Storage 資料，將已經分組的成員放入對應的組別清單
 Object.keys(storedResults).forEach(name => {
-    const finalGroup = preAssignedGroups[name]; 
+    const finalGroup = preAssignedGroups[name];
     const btnID = `btn_${name}_added`;
     const btnMember = createButton(btnID, name, 'name-button', () => { removeFromGroup(btnID, groupLists[finalGroup], name) })
     // const listItem = document.createElement('li');
     // listItem.textContent = name;
     groupLists[finalGroup].appendChild(btnMember);
 });
+
+
+function calculateMemberCountOfEachGroup() {
+    document.getElementById('countA').innerText = countByGroup(0);
+    document.getElementById('countB').innerText = countByGroup(1);
+    document.getElementById('countC').innerText = countByGroup(2);
+    document.getElementById('countD').innerText = countByGroup(3);
+
+}
+
+function countByGroup(groupID) {
+    const groupResult = JSON.parse(localStorage.getItem('groupResults'));
+    const names = Object.keys(groupResult);
+    let result = 0;
+    for (const name of names) {
+        const group = groupResult[name];
+        if (group === groupID) {
+            result += 1;
+        }
+    }
+    return result ;
+}
+
+calculateMemberCountOfEachGroup();
